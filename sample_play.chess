@@ -1,0 +1,149 @@
+<<PY>>
+import sys
+import chess
+import chess.pgn
+import os
+import datetime
+import subprocess
+
+try:
+    import argparse
+except ImportError:
+    print("argparse not found, exiting.")
+    sys.exit(1)
+
+# --- GUI optional ---
+use_gui = '--gui' in sys.argv
+GUI_AVAILABLE = False
+
+if use_gui:
+    try:
+        from gi.repository import Gtk
+        GUI_AVAILABLE = True
+    except ImportError:
+        print("GUI unavailable: GTK not found. Falling back to CLI.")
+        use_gui = False
+
+# --- Argument parsing ---
+parser = argparse.ArgumentParser(description="CHMER .chess runner")
+parser.add_argument('--run', help="Run .chess script in CLI")
+parser.add_argument('--gui', help="Run .chess script in GTK GUI")
+parser.add_argument('--debug', action='store_true', help="Enable debug output")
+parser.add_argument('--stockfish', help="Path to Stockfish binary")
+args = parser.parse_args()
+
+# --- Helper: print board with coordinates ---
+def print_board(board):
+    print()
+    for i in range(8, 0, -1):
+        row = []
+        for j in range(8):
+            square = chess.square(j, i-1)
+            piece = board.piece_at(square)
+            row.append(piece.symbol() if piece else ".")
+        print(f"{i} {' '.join(row)}")
+    print("  a b c d e f g h\n")
+
+# --- Helper: convert SAN -> UCI ---
+def san_to_uci(board, san):
+    try:
+        move = board.parse_san(san)
+        return move.uci()
+    except ValueError:
+        return None
+
+# --- CLI game loop ---
+def cli_game(board, stockfish_path=None):
+    print("Welcome to CHMER interactive UCI play!")
+    print("Enter moves in UCI (e.g., e2e4, g1f3).")
+    print_board(board)
+    
+    # Ask who is playing
+    players = input("Choose game mode:\n1. Human vs Human\n2. Human vs Stockfish\n3. Stockfish vs Stockfish\nSelect 1/2/3: ").strip()
+    
+    if players == "1":
+        white_type = "human"
+        black_type = "human"
+    elif players == "2":
+        color = input("Do you want to play White or Black? (w/b): ").strip().lower()
+        if color == "w":
+            white_type = "human"
+            black_type = "ai"
+        else:
+            white_type = "ai"
+            black_type = "human"
+    else:
+        white_type = "ai"
+        black_type = "ai"
+    
+    # Initialize PGN
+    game = chess.pgn.Game()
+    node = game
+    
+    while not board.is_game_over():
+        print_board(board)
+        legal_moves = [move.uci() for move in board.legal_moves]
+        print(f"Legal moves: {legal_moves}")
+        
+        if board.turn == chess.WHITE:
+            player_type = white_type
+        else:
+            player_type = black_type
+        
+        move_uci = None
+        if player_type == "human":
+            while True:
+                move_input = input("Your move (UCI): ").strip()
+                if move_input in legal_moves:
+                    move_uci = move_input
+                    break
+                else:
+                    print("Invalid move! Try again.")
+        else:
+            if not stockfish_path or not os.path.isfile(stockfish_path):
+                print("Stockfish path invalid, skipping AI move.")
+                break
+            # Call Stockfish
+            proc = subprocess.Popen(stockfish_path, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+            proc.stdin.write(f"position fen {board.fen()}\n")
+            proc.stdin.write("go movetime 500\n")
+            proc.stdin.flush()
+            uci_move = None
+            for line in proc.stdout:
+                if line.startswith("bestmove"):
+                    uci_move = line.split()[1]
+                    break
+            proc.kill()
+            move_uci = uci_move
+        
+        move = chess.Move.from_uci(move_uci)
+        board.push(move)
+        node = node.add_variation(move)
+    
+    # Game over
+    print("Game over!")
+    print("Result:", board.result())
+    
+    # Save PGN
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"CHMER_{timestamp}.pgn"
+    with open(filename, "w") as f:
+        f.write(str(game))
+    print(f"Game saved to {filename}")
+
+# --- GUI stub ---
+def launch_gui():
+    if not GUI_AVAILABLE:
+        print("GUI not available.")
+        return
+    print("Launching GUI (stub). Implement GTK GUI here.")
+
+# --- Main execution ---
+if use_gui:
+    launch_gui()
+elif args.run:
+    board = chess.Board()
+    cli_game(board, stockfish_path=args.stockfish)
+else:
+    parser.print_help()
+<</PY>>
