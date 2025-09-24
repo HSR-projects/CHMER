@@ -1,0 +1,10 @@
+# simple_analyze.chess
+# Load a short PGN, analyze current position with Stockfish depth=20,
+# show best continuation (PV) and score to console.
+
+analyze depth=20 side=both output=console
+
+<<PGN>>
+[Event "Example Position"]
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7
+<</PGN>>
