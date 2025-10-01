@@ -1,4 +1,4 @@
-# CHMER — Chess Mini Programming Language
+![Logo](ch.png) # CHMER — Chess Mini Programming Language
 
 CHMER is a tiny, Python-based programming language for chess scripts (`.chess`).  
 It includes a **CLI interpreter** and a **GTK GUI** for analyzing, playing, and exporting chess games.
