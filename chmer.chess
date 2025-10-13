@@ -1,0 +1,18 @@
+set x=3
+say Starting full chess analysis
+move e2e4
+move e7e5
+castle kingside
+analyze depth=15
+if x>2 then
+    promote queen
+    say x is big
+end-if
+loop 2 times
+    move g1f3
+    wait 200
+end-loop
+label start
+move d2d4
+goto start
+save game.pgn
