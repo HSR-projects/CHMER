@@ -89,7 +89,7 @@ CHMER is open source! Contributions are welcome via GitHub pull requests.
 Follow the GPL license and include proper attribution.
 License
 
-This project is licensed under the GNU General Public License v3.0 (GPL-3.0).
+This project is licensed under the GNU Lesser General Public License v3.0 (GPL-3.0).
 See the LICENSE
 
 file for full details.
