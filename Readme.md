@@ -92,9 +92,8 @@ License
 This project is licensed under the GNU Lesser General Public License v3.0 (LGPL-3.0).
 See the LICENSE
 
-file for full details.
-Author
+
 
 organisation: HSR-projects 
 Owner: Hemesh Kasukurthy
-GitHub: https://github.com/HSR-projects
+GitHub: https://github.com/chessdna
