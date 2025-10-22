@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHMER — Docs</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: 'Inter', sans-serif; background: #0f3d0f; color: #e0e0e0; }
+  .glass { background: rgba(20,25,35,0.45); backdrop-filter: blur(20px); border:1px solid rgba(0,255,128,0.2); border-radius:1.5rem; transition: all 0.3s ease;}
+  .glow { background: linear-gradient(90deg, #00ff80, #00e0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 10px rgba(0,255,128,0.5),0 0 20px rgba(0,224,255,0.3);}
+  .hover-glow:hover { box-shadow:0 0 20px #00ff80,0 0 40px #00e0ff; transform: translateY(-3px);}
+  pre { background: rgba(10,20,15,0.7); border-radius:1rem; padding:1rem; overflow-x:auto; border:1px solid rgba(0,255,128,0.2);}
+  code { color: #00ff80; font-family: "JetBrains Mono", monospace; }
+  .fade-in { opacity:0; transform: translateY(20px); transition: all 0.8s ease-out; }
+  .fade-in.show { opacity:1; transform: translateY(0); }
+</style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+<!-- Navbar -->
+<header class="fixed w-full top-0 z-50 glass flex justify-between items-center px-8 py-4 backdrop-blur-lg">
+  <div class="flex items-center gap-3">
+    <div class="rounded-full bg-green-600 p-2 shadow-lg hover:shadow-green-400 transition">
+      <img src="https://github.com/HSR-projects/CHMER-chess-programing-language/blob/main/ch.png?raw=true" alt="CHMER Logo" class="h-10 w-10">
+    </div>
+    <h1 class="text-2xl font-bold glow">CHMER</h1>
+  </div>
+  <nav class="flex gap-6 text-gray-200">
+    <a href="index.html" class="hover:text-green-400 transition">Home</a>
+    <a href="docs.html" class="hover:text-green-400 transition">Docs</a>
+    <a href="playground.html" class="hover:text-green-400 transition">Playground</a>
+    <a href="packages.html" class="hover:text-green-400 transition">Packages</a>
+    <a href="get-started.html" class="hover:text-green-400 transition">Get Started</a>
+  </nav>
+</header>
+
+<main class="mt-32 px-6 sm:px-16 space-y-12">
+
+  <section class="fade-in">
+    <h2 class="text-4xl font-bold glow mb-6 text-center">CHMER Documentation</h2>
+    <p class="text-gray-200 text-center mb-6">Everything you need to know about CHMER syntax, functions, and packages.</p>
+    
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="glass p-6 hover-glow transition">
+        <h3 class="text-green-400 font-semibold mb-2">Syntax Reference</h3>
+        <p class="text-gray-200 text-sm">Learn how to write CHMER programs, control flow, and logic structures.</p>
+      </div>
+      <div class="glass p-6 hover-glow transition">
+        <h3 class="text-green-400 font-semibold mb-2">Built-in Functions</h3>
+        <p class="text-gray-200 text-sm">Detailed explanation of all native functions in CHMER.</p>
+      </div>
+      <div class="glass p-6 hover-glow transition">
+        <h3 class="text-green-400 font-semibold mb-2">Package Guide</h3>
+        <p class="text-gray-200 text-sm">Learn how to use gen_program, sys, vm, and internet packages efficiently.</p>
+      </div>
+      <div class="glass p-6 hover-glow transition">
+        <h3 class="text-green-400 font-semibold mb-2">Examples</h3>
+        <p class="text-gray-200 text-sm">Code snippets to help you start building CHMER programs quickly.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="fade-in max-w-3xl mx-auto">
+    <h3 class="text-2xl font-semibold glow mb-4">Hello World Example</h3>
+    <pre><code>func main() {
+  print("Hello from CHMER!")
+}</code></pre>
+  </section>
+
+</main>
+
+<footer class="text-center py-8 mt-16 text-gray-400 border-t border-gray-700/40">
+  <p>© 2025 HSR-projects — CHMER is free software under GPLv3.</p>
+  <p class="pt-2"><a href="https://github.com/HSR-projects" class="text-green-400 hover:underline">GitHub</a></p>
+</footer>
+
+<script>
+  const faders = document.querySelectorAll('.fade-in');
+  const appearOptions = { threshold: 0.2 };
+  const appearOnScroll = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){ entry.target.classList.add('show'); observer.unobserve(entry.target); }
+    });
+  }, appearOptions);
+  faders.forEach(fader => appearOnScroll.observe(fader));
+</script>
+
+</body>
+</html>
+

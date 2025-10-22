@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHMER — Playground</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { font-family:'JetBrains Mono', monospace; background:#0f3d0f; color:#e0e0e0; }
+.glass { background: rgba(20,25,35,0.45); backdrop-filter: blur(20px); border:1px solid rgba(0,255,128,0.2); border-radius:1.5rem; transition: all 0.3s ease;}
+.glow { background: linear-gradient(90deg,#00ff80,#00e0ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 0 10px rgba(0,255,128,0.5),0 0 20px rgba(0,224,255,0.3);}
+.hover-glow:hover { box-shadow:0 0 20px #00ff80,0 0 40px #00e0ff; transform: translateY(-3px);}
+.fade-in { opacity:0; transform: translateY(20px); transition: all 0.8s ease-out; }
+.fade-in.show { opacity:1; transform: translateY(0); }
+#editor { width:100%; min-height:300px; max-height:70vh; overflow:auto; padding:1rem; border-radius:1rem; border:1px solid rgba(0,255,128,0.2); background: rgba(10,20,15,0.7); color:#00ff80; outline:none; white-space:pre; }
+.output { background: rgba(10,20,15,0.7); border-radius:1rem; padding:1rem; margin-top:1rem; min-height:100px; border:1px solid rgba(0,255,128,0.2); color:#00ff80; overflow:auto; }
+</style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+<!-- Navbar -->
+<header class="fixed w-full top-0 z-50 glass flex justify-between items-center px-8 py-4 backdrop-blur-lg">
+  <div class="flex items-center gap-3">
+    <div class="rounded-full bg-green-600 p-2 shadow-lg hover:shadow-green-400 transition">
+      <img src="https://github.com/HSR-projects/CHMER-chess-programing-language/blob/main/ch.png?raw=true" alt="CHMER Logo" class="h-10 w-10">
+    </div>
+    <h1 class="text-2xl font-bold glow">CHMER</h1>
+  </div>
+  <nav class="flex gap-6 text-gray-200">
+    <a href="index.html" class="hover:text-green-400 transition">Home</a>
+    <a href="docs.html" class="hover:text-green-400 transition">Docs</a>
+    <a href="playground.html" class="hover:text-green-400 transition">Playground</a>
+    <a href="packages.html" class="hover:text-green-400 transition">Packages</a>
+    <a href="get-started.html" class="hover:text-green-400 transition">Get Started</a>
+  </nav>
+</header>
+
+<main class="mt-32 px-6 sm:px-16 space-y-12 fade-in">
+  <section class="text-center">
+    <h2 class="text-4xl font-bold glow mb-6">CHMER Playground</h2>
+    <p class="text-gray-200 mb-6">Type your code below. Unlimited lines. Click Run to see output.</p>
+     <p class="text-gray-200 mb-6">Note: This is only for demo it only supports print for full fleged programming download CHMER.</p>
+
+    <div class="glass p-6">
+      <div id="editor" contenteditable="true" spellcheck="false">
+// Type your CHMER code here
+func main() {
+  print("Hello from CHMER Playground!")
+}
+      </div>
+
+      <button id="run" class="mt-4 px-6 py-2 bg-green-600 rounded-xl glow hover-glow">Run Code</button>
+
+      <div id="output" class="output">Output will appear here...</div>
+    </div>
+  </section>
+</main>
+
+<footer class="text-center py-8 mt-16 text-gray-400 border-t border-gray-700/40">
+  <p>© 2025 HSR-projects — CHMER is free software under GPLv3.</p>
+  <p class="pt-2"><a href="https://github.com/HSR-projects" class="text-green-400 hover:underline">GitHub</a></p>
+</footer>
+
+<script>
+  // Scroll fade-in
+  const faders = document.querySelectorAll('.fade-in');
+  const appearOptions = { threshold: 0.2 };
+  const appearOnScroll = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){ entry.target.classList.add('show'); observer.unobserve(entry.target); }
+    });
+  }, appearOptions);
+  faders.forEach(fader => appearOnScroll.observe(fader));
+
+  // Run code simulation
+  document.getElementById('run').addEventListener('click', () => {
+    const code = document.getElementById('editor').innerText;
+    const lines = code.split('\n');
+    let output = '';
+    lines.forEach(line => {
+      const match = line.match(/print\(["'](.*)["']\)/);
+      if(match) output += match[1] + "\n";
+    });
+    document.getElementById('output').innerText = output || "No output detected";
+  });
+</script>
+
+</body>
+</html>

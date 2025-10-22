@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHMER — by HSR-projects</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Scroll animations */
+    .fade-in { opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; }
+    .fade-in.show { opacity: 1; transform: translateY(0); }
+
+    /* Glow text & hover */
+    .glow {
+      background: linear-gradient(90deg, #00ff80, #00e0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 10px rgba(0,255,128,0.5), 0 0 20px rgba(0,224,255,0.3);
+    }
+    .hover-glow:hover {
+      box-shadow: 0 0 20px #00ff80, 0 0 40px #00e0ff;
+      transform: translateY(-3px);
+    }
+
+    /* Glass card */
+    .glass {
+      background: rgba(20, 25, 35, 0.45);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,255,128,0.2);
+      border-radius: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    /* Code block */
+    pre {
+      background: rgba(10, 20, 15, 0.7);
+      border-radius: 1rem;
+      padding: 1rem;
+      overflow-x: auto;
+      border: 1px solid rgba(0,255,128,0.2);
+    }
+    code { color: #00ff80; font-family: "JetBrains Mono", monospace; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f3d0f; /* Dark green base from logo */
+      color: #e0e0e0;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+  <!-- Navbar -->
+  <header class="fixed w-full top-0 z-50 glass flex justify-between items-center px-8 py-4 backdrop-blur-lg">
+    <div class="flex items-center gap-3">
+      <div class="rounded-full bg-green-600 p-2 shadow-lg hover:shadow-green-400 transition">
+        <img src="https://github.com/HSR-projects/CHMER-chess-programing-language/blob/main/ch.png?raw=true" alt="CHMER Logo" class="h-10 w-10">
+      </div>
+      <h1 class="text-2xl font-bold glow">CHMER</h1>
+    </div>
+    <nav class="flex gap-6 text-gray-200">
+      <a href="docs.html" class="hover:text-green-400 transition">Docs</a>
+      <a href="playground.html" class="hover:text-green-400 transition">Playground</a>
+      <a href="packages.html" class="hover:text-green-400 transition">Packages</a>
+      <a href="https://github.com/HSR-projects" class="hover:text-green-400 transition">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="flex-1 mt-32 px-6 sm:px-16 space-y-24">
+
+    <!-- Hero -->
+    <section class="text-center space-y-6 fade-in">
+      <div class="mx-auto w-24 h-24 rounded-full bg-green-600 shadow-lg flex items-center justify-center">
+        <img src="https://github.com/HSR-projects/CHMER-chess-programing-language/blob/main/ch.png?raw=true" alt="CHMER Logo" class="h-16 w-16">
+      </div>
+      <h1 class="text-6xl font-bold glow">CHMER</h1>
+      <p class="text-gray-200 text-lg">Fast. Logical. Expressive.<br>Built by <span class="text-green-400">HSR-projects</span>.</p>
+      <div class="space-x-4 pt-4">
+        <a href="get-started.html" class="px-6 py-2 glass rounded-xl hover-glow transition">Get Started</a>
+        <a href="docs.html" class="px-6 py-2 border border-green-400/50 rounded-xl hover-glow transition">Docs</a>
+      </div>
+    </section>
+
+    <!-- Code Example -->
+    <section class="max-w-3xl mx-auto fade-in">
+      <pre><code>func main() {
+  move knight from g1 to f3
+  print("Hello from CHMER!")
+}</code></pre>
+    </section>
+
+    <!-- Why CHMER -->
+    <section class="text-center fade-in">
+      <h2 class="text-3xl font-semibold mb-10 glow">Why CHMER?</h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="glass p-6 hover-glow transition">
+          <h3 class="text-green-400 font-semibold mb-2">🧩 Simple Syntax</h3>
+          <p class="text-gray-200 text-sm">Readable like Python, structured like Go — designed for clarity.</p>
+        </div>
+        <div class="glass p-6 hover-glow transition">
+          <h3 class="text-green-400 font-semibold mb-2">⚡ Efficient Core</h3>
+          <p class="text-gray-200 text-sm">Built for speed, optimized for real-time logic and computation.</p>
+        </div>
+        <div class="glass p-6 hover-glow transition">
+          <h3 class="text-green-400 font-semibold mb-2">♟️ Logic-Aware</h3>
+          <p class="text-gray-200 text-sm">Natively understands chess-style reasoning and AI structures.</p>
+        </div>
+        <div class="glass p-6 hover-glow transition">
+          <h3 class="text-green-400 font-semibold mb-2">🔐 Open Source</h3>
+          <p class="text-gray-200 text-sm">Maintained by HSR-projects, licensed under GPLv3.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Packages -->
+    <section id="packages" class="text-center fade-in">
+      <h2 class="text-3xl font-semibold mb-10 glow">CHMER Packages</h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="glass p-6 hover-glow transition">
+          <h3 class="text-green-400 font-semibold mb-2">gen_program</h3>
+          <p class="text-gray-200 text-sm">General-purpose tools for non-chess programs and productivity.</p>
+        </div>
+        <div class="glass p-6 hover-glow transition">
+          <h3 class="text-green-400 font-semibold mb-2">sys</h3>
+          <p class="text-gray-200 text-sm">System management, environment, and hardware utilities.</p>
+        </div>
+        <div class="glass p-6 hover-glow transition">
+          <h3 class="text-green-400 font-semibold mb-2">vm</h3>
+          <p class="text-gray-200 text-sm">Memory and virtual machine operations with deep inspection.</p>
+        </div>
+        <div class="glass p-6 hover-glow transition">
+          <h3 class="text-green-400 font-semibold mb-2">internet</h3>
+          <p class="text-gray-200 text-sm">Networking, HTTP requests, and remote communication support.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center py-8 mt-16 text-gray-400 border-t border-gray-700/40">
+    <p>© 2025 HSR-projects — CHMER is free software under GPLv3.</p>
+    <p class="pt-2"><a href="https://github.com/HSR-projects" class="text-green-400 hover:underline">GitHub</a> • <a href="#" class="text-green-400 hover:underline">Docs</a> • <a href="#" class="text-green-400 hover:underline">Playground</a></p>
+  </footer>
+
+  <!-- Scroll animation JS -->
+  <script>
+    const faders = document.querySelectorAll('.fade-in');
+    const appearOptions = { threshold: 0.2 };
+    const appearOnScroll = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){ entry.target.classList.add('show'); observer.unobserve(entry.target); }
+      });
+    }, appearOptions);
+    faders.forEach(fader => appearOnScroll.observe(fader));
+  </script>
+
+</body>
+</html>
