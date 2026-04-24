@@ -42,6 +42,8 @@ cp "$ROOT_DIR/LICENSE" "$PKG_DIR/LICENSE"
 cp -R "$ROOT_DIR/examples" "$PKG_DIR/examples"
 cp "$ROOT_DIR/install.sh" "$DIST_DIR/install.sh"
 cp "$ROOT_DIR/install.ps1" "$DIST_DIR/install.ps1"
+cp "$ROOT_DIR/install.bat" "$DIST_DIR/install.bat"
+cp "$ROOT_DIR/uninstall.bat" "$DIST_DIR/uninstall.bat"
 cp "$ROOT_DIR/../chmer.png" "$DIST_DIR/chmer.png"
 cp "$ROOT_DIR/README.md" "$DIST_DIR/README.md"
 cp "$ROOT_DIR/LICENSE" "$DIST_DIR/LICENSE"
@@ -119,6 +121,8 @@ if command -v zip >/dev/null 2>&1; then
   for f in \
     "install.sh" \
     "install.ps1" \
+    "install.bat" \
+    "uninstall.bat" \
     "README.md" \
     "LICENSE" \
     "chmer.png" \

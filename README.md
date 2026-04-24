@@ -23,10 +23,18 @@ curl -fsSL <RELEASE_BASE_URL>/install.sh | sh
 iwr -useb <RELEASE_BASE_URL>/install.ps1 | iex
 ```
 
+- **Windows (Batch wrapper, no installer EXE required)**:
+
+```bat
+install.bat
+```
+
 > The installers download a **precompiled** `chmer` for your OS/CPU. No building.
 >
 > Put `install.sh` and `install.ps1` in your release download directory and keep
 > all precompiled archives there too.
+>
+> For Windows convenience, include `install.bat` and `uninstall.bat` in release assets.
 
 ## VS Code / Cursor file logo for `.ch`
 
@@ -127,6 +135,7 @@ Publish these files in your release (same directory as `install.sh` / `install.p
 - **Logo asset**: `chmer.png`
 - **Unix assets pack**: `chmer-assets.tar.gz` (images/text/emoji/resources)
 - **Windows assets pack**: `chmer-assets.zip`
+- **Windows helpers**: `install.bat`, `uninstall.bat`
 
 Optional convenience bundle:
 

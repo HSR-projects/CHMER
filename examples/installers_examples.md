@@ -14,6 +14,18 @@ curl -fsSL https://github.com/HSR-projects/chmer/releases/latest/download/instal
 iwr -useb https://github.com/HSR-projects/chmer/releases/latest/download/install.ps1 | iex
 ```
 
+### Windows (batch installer wrapper)
+
+```bat
+install.bat
+```
+
+### Windows uninstall
+
+```bat
+uninstall.bat
+```
+
 ### Custom release base URL
 
 ```sh
