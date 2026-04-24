@@ -26,11 +26,11 @@ jobs:
             exe_name: chmer
             build_tool: cargo
           - slug: linux-aarch64
-            runner: ubuntu-latest
+            runner: ubuntu-24.04-arm
             target: aarch64-unknown-linux-gnu
             archive: chmer-linux-aarch64.tar.gz
             exe_name: chmer
-            build_tool: cross
+            build_tool: cargo
           - slug: macos-aarch64
             runner: macos-14
             target: aarch64-apple-darwin
@@ -43,30 +43,6 @@ jobs:
             archive: chmer-macos-x86_64.tar.gz
             exe_name: chmer
             build_tool: cargo
-          - slug: freebsd-x86_64
-            runner: ubuntu-latest
-            target: x86_64-unknown-freebsd
-            archive: chmer-freebsd-x86_64.tar.gz
-            exe_name: chmer
-            build_tool: cross
-          - slug: freebsd-aarch64
-            runner: ubuntu-latest
-            target: aarch64-unknown-freebsd
-            archive: chmer-freebsd-aarch64.tar.gz
-            exe_name: chmer
-            build_tool: cross
-          - slug: openbsd-x86_64
-            runner: ubuntu-latest
-            target: x86_64-unknown-openbsd
-            archive: chmer-openbsd-x86_64.tar.gz
-            exe_name: chmer
-            build_tool: cross
-          - slug: netbsd-x86_64
-            runner: ubuntu-latest
-            target: x86_64-unknown-netbsd
-            archive: chmer-netbsd-x86_64.tar.gz
-            exe_name: chmer
-            build_tool: cross
 
     steps:
       - uses: actions/checkout@v4
@@ -79,31 +55,9 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         if: matrix.build_tool == 'zigbuild'
 
-      - name: Setup Zig
-        if: runner.os == 'Linux' && matrix.build_tool == 'zigbuild'
-        uses: goto-bus-stop/setup-zig@v2
-        with:
-          version: 0.13.0
-
-      - name: Install cargo-zigbuild
-        if: runner.os == 'Linux' && matrix.build_tool == 'zigbuild'
-        run: cargo install cargo-zigbuild
-
-      - name: Install cross
-        if: runner.os == 'Linux' && matrix.build_tool == 'cross'
-        run: cargo install cross --git https://github.com/cross-rs/cross
-
       - name: Build (cargo)
         if: matrix.build_tool == 'cargo'
         run: cargo build --release --target "${{ matrix.target }}"
-
-      - name: Build (cargo-zigbuild)
-        if: runner.os == 'Linux' && matrix.build_tool == 'zigbuild'
-        run: cargo zigbuild --release --target "${{ matrix.target }}"
-
-      - name: Build (cross)
-        if: runner.os == 'Linux' && matrix.build_tool == 'cross'
-        run: cross build --release --target "${{ matrix.target }}"
 
       - name: Verify binary exists
         if: runner.os == 'Linux'
@@ -117,10 +71,6 @@ jobs:
         run: |
           test -f "target/${{ matrix.target }}/release/${{ matrix.exe_name }}"
 
-      - name: Build (macOS compatibility no-op)
-        if: runner.os == 'macOS' && matrix.build_tool != 'cargo'
-        run: cargo build --release --target "${{ matrix.target }}"
-
       - name: Package archive
         shell: bash
         run: |
@@ -131,6 +81,66 @@ jobs:
           cp LICENSE out/pkg/LICENSE
           cp -R examples out/pkg/examples
           tar -czf "out/${{ matrix.archive }}" -C out/pkg .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.archive }}
+          path: out/${{ matrix.archive }}
+
+  build-bsd:
+    name: Build ${{ matrix.slug }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - slug: freebsd-x86_64
+            os: freebsd
+            version: "14.1"
+            architecture: x86_64
+            archive: chmer-freebsd-x86_64.tar.gz
+          - slug: freebsd-aarch64
+            os: freebsd
+            version: "14.1"
+            architecture: aarch64
+            archive: chmer-freebsd-aarch64.tar.gz
+          - slug: openbsd-x86_64
+            os: openbsd
+            version: "7.5"
+            architecture: x86_64
+            archive: chmer-openbsd-x86_64.tar.gz
+          - slug: netbsd-x86_64
+            os: netbsd
+            version: "10.0"
+            architecture: x86_64
+            archive: chmer-netbsd-x86_64.tar.gz
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build in BSD VM
+        uses: cross-platform-actions/action@v0.25.0
+        with:
+          operating_system: ${{ matrix.os }}
+          version: ${{ matrix.version }}
+          architecture: ${{ matrix.architecture }}
+          shell: sh
+          environment_variables: GITHUB_WORKSPACE
+          run: |
+            set -eu
+            case "${{ matrix.os }}" in
+              freebsd) pkg install -y rust ;;
+              openbsd) pkg_add rust ;;
+              netbsd) pkgin -y install rust ;;
+            esac
+            cd "$GITHUB_WORKSPACE"
+            cargo build --release
+            mkdir -p out/pkg/bin
+            cp target/release/chmer out/pkg/bin/chmer
+            cp README.md out/pkg/README.md
+            cp LICENSE out/pkg/LICENSE
+            cp -R examples out/pkg/examples
+            tar -czf "out/${{ matrix.archive }}" -C out/pkg .
 
       - uses: actions/upload-artifact@v4
         with:
@@ -182,7 +192,7 @@ jobs:
   upload-release:
     name: Upload artifacts to release
     runs-on: ubuntu-latest
-    needs: [build-unix, build-windows]
+    needs: [build-unix, build-bsd, build-windows]
     steps:
       - uses: actions/checkout@v4
 
