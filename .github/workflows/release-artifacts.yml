@@ -146,14 +146,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@nightly
         with:
-          targets: x86_64-unknown-openbsd
+          components: rust-src
       - uses: goto-bus-stop/setup-zig@v2
       - name: Install cargo-zigbuild
         run: cargo install cargo-zigbuild
       - name: Build
-        run: cargo zigbuild --release --target x86_64-unknown-openbsd
+        run: cargo +nightly zigbuild -Z build-std --release --target x86_64-unknown-openbsd
       - name: Package archive
         shell: bash
         run: |
