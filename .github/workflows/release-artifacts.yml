@@ -131,10 +131,9 @@ jobs:
             case "${{ matrix.os }}" in
               freebsd) sudo pkg install -y rust ;;
               openbsd)
-                sudo pkg_add curl rustup
-                rustup-init -y --profile minimal
+                sudo pkg_add curl
+                curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable
                 export PATH="$HOME/.cargo/bin:$PATH"
-                rustup default stable
                 ;;
               netbsd) sudo pkgin -y install rust ;;
             esac
