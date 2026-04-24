@@ -130,10 +130,18 @@ jobs:
             set -eu
             case "${{ matrix.os }}" in
               freebsd) sudo pkg install -y rust ;;
-              openbsd) sudo pkg_add rust ;;
+              openbsd)
+                sudo pkg_add curl rustup
+                rustup-init -y --profile minimal
+                export PATH="$HOME/.cargo/bin:$PATH"
+                rustup default stable
+                ;;
               netbsd) sudo pkgin -y install rust ;;
             esac
             cd "$GITHUB_WORKSPACE"
+            if [ "${{ matrix.os }}" = "openbsd" ]; then
+              export PATH="$HOME/.cargo/bin:$PATH"
+            fi
             cargo build --release
             mkdir -p out/pkg/bin
             cp target/release/chmer out/pkg/bin/chmer
