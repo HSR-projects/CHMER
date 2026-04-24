@@ -79,13 +79,15 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         if: matrix.build_tool == 'zigbuild'
 
-      - name: Install zigbuild toolchain
+      - name: Setup Zig
         if: runner.os == 'Linux' && matrix.build_tool == 'zigbuild'
-        shell: bash
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y zig
-          cargo install cargo-zigbuild
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.13.0
+
+      - name: Install cargo-zigbuild
+        if: runner.os == 'Linux' && matrix.build_tool == 'zigbuild'
+        run: cargo install cargo-zigbuild
 
       - name: Build (cargo)
         if: matrix.build_tool == 'cargo'
