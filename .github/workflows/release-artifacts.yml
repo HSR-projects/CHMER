@@ -30,7 +30,7 @@ jobs:
             target: aarch64-unknown-linux-gnu
             archive: chmer-linux-aarch64.tar.gz
             exe_name: chmer
-            build_tool: zigbuild
+            build_tool: cross
           - slug: macos-aarch64
             runner: macos-14
             target: aarch64-apple-darwin
@@ -48,25 +48,25 @@ jobs:
             target: x86_64-unknown-freebsd
             archive: chmer-freebsd-x86_64.tar.gz
             exe_name: chmer
-            build_tool: zigbuild
+            build_tool: cross
           - slug: freebsd-aarch64
             runner: ubuntu-latest
             target: aarch64-unknown-freebsd
             archive: chmer-freebsd-aarch64.tar.gz
             exe_name: chmer
-            build_tool: zigbuild
+            build_tool: cross
           - slug: openbsd-x86_64
             runner: ubuntu-latest
             target: x86_64-unknown-openbsd
             archive: chmer-openbsd-x86_64.tar.gz
             exe_name: chmer
-            build_tool: zigbuild
+            build_tool: cross
           - slug: netbsd-x86_64
             runner: ubuntu-latest
             target: x86_64-unknown-netbsd
             archive: chmer-netbsd-x86_64.tar.gz
             exe_name: chmer
-            build_tool: zigbuild
+            build_tool: cross
 
     steps:
       - uses: actions/checkout@v4
@@ -89,6 +89,10 @@ jobs:
         if: runner.os == 'Linux' && matrix.build_tool == 'zigbuild'
         run: cargo install cargo-zigbuild
 
+      - name: Install cross
+        if: runner.os == 'Linux' && matrix.build_tool == 'cross'
+        run: cargo install cross --git https://github.com/cross-rs/cross
+
       - name: Build (cargo)
         if: matrix.build_tool == 'cargo'
         run: cargo build --release --target "${{ matrix.target }}"
@@ -96,6 +100,10 @@ jobs:
       - name: Build (cargo-zigbuild)
         if: runner.os == 'Linux' && matrix.build_tool == 'zigbuild'
         run: cargo zigbuild --release --target "${{ matrix.target }}"
+
+      - name: Build (cross)
+        if: runner.os == 'Linux' && matrix.build_tool == 'cross'
+        run: cross build --release --target "${{ matrix.target }}"
 
       - name: Verify binary exists
         if: runner.os == 'Linux'
