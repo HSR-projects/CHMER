@@ -1,6 +1,6 @@
 ## CHMER 5
 
-![CHMER Logo](../chmer.png)
+![CHMER Logo](chmer.png)
 
 **CHMER 5** (Chess Machine Engine Runtime v5) is a standalone programming language for chess development.
 
