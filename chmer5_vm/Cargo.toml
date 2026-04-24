@@ -1,0 +1,16 @@
+[package]
+name = "chmer5_vm"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+chmer5_compiler = { path = "../chmer5_compiler" }
+chmer5_std = { path = "../chmer5_std" }
+chmer5_chess = { path = "../chmer5_chess" }
+chmer5_fonts = { path = "../chmer5_fonts" }
+tiny_http = "0.12"
+ureq = { version = "2", features = ["json"] }
+serde_json.workspace = true
+eframe = "0.30"

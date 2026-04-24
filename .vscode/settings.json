@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "*.ch": "javascript",
+    "*.ctl": "javascript"
+  },
+  "workbench.iconTheme": "chmer-icons"
+}

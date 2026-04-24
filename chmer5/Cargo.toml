@@ -1,0 +1,15 @@
+[package]
+name = "chmer"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "chmer"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+chmer5_compiler = { path = "../chmer5_compiler" }
+chmer5_vm = { path = "../chmer5_vm" }

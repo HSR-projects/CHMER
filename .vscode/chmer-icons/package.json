@@ -1,0 +1,22 @@
+{
+  "name": "chmer-icons",
+  "displayName": "CHMER Icons",
+  "description": "File icons for CHMER language files",
+  "version": "0.0.1",
+  "publisher": "hsr-projects",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "contributes": {
+    "iconThemes": [
+      {
+        "id": "chmer-icons",
+        "label": "CHMER Icons",
+        "path": "./icon-theme.json"
+      }
+    ]
+  }
+}
