@@ -176,6 +176,28 @@ jobs:
           cp install.sh install.ps1 install.bat uninstall.bat LICENSE README.md release/
           (cd release && zip -rq installers.zip .)
 
+      - name: Verify artifacts contain binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in \
+            chmer-linux-x86_64.tar.gz \
+            chmer-linux-aarch64.tar.gz \
+            chmer-macos-aarch64.tar.gz \
+            chmer-macos-x86_64.tar.gz \
+            chmer-freebsd-x86_64.tar.gz \
+            chmer-freebsd-aarch64.tar.gz \
+            chmer-openbsd-x86_64.tar.gz \
+            chmer-netbsd-x86_64.tar.gz
+          do
+            tar -tzf "release/$f" | rg -q '(^|/)chmer$'
+          done
+          for f in chmer-windows-x86_64.zip chmer-windows-aarch64.zip; do
+            unzip -l "release/$f" | awk '{print $4}' | rg -q '(^|/)chmer\.exe$'
+            unzip -l "release/$f" | awk '{print $4}' | rg -q '(^|/)install\.bat$'
+            unzip -l "release/$f" | awk '{print $4}' | rg -q '(^|/)uninstall\.bat$'
+          done
+
       - name: Upload to GitHub release
         env:
           GH_TOKEN: ${{ github.token }}

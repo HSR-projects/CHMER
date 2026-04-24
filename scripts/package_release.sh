@@ -114,9 +114,38 @@ if [ -n "$MISSING_FILES" ]; then
   fi
 fi
 
+has_unix_binary() {
+  archive="$1"
+  tar -tzf "$archive" | rg -q '(^|/)chmer$'
+}
+
+has_windows_binary() {
+  archive="$1"
+  unzip -l "$archive" | awk '{print $4}' | rg -q '(^|/)chmer\.exe$'
+}
+
+# Every platform archive must include a real binary.
+for unix_tgz in "$DIST_DIR"/chmer-linux-*.tar.gz \
+                "$DIST_DIR"/chmer-macos-*.tar.gz \
+                "$DIST_DIR"/chmer-freebsd-*.tar.gz \
+                "$DIST_DIR"/chmer-openbsd-*.tar.gz \
+                "$DIST_DIR"/chmer-netbsd-*.tar.gz
+do
+  if [ -f "$unix_tgz" ]; then
+    if ! has_unix_binary "$unix_tgz"; then
+      echo "error: $unix_tgz does not contain chmer binary"
+      exit 1
+    fi
+  fi
+done
+
 # Windows archives must contain helper scripts so install.ps1 can delegate.
 for win_zip in "$DIST_DIR"/chmer-windows-*.zip; do
   if [ -f "$win_zip" ] && command -v unzip >/dev/null 2>&1; then
+    if ! has_windows_binary "$win_zip"; then
+      echo "error: $win_zip does not contain chmer.exe"
+      exit 1
+    fi
     if ! unzip -l "$win_zip" | awk '{print $4}' | rg -q '^install\.bat$'; then
       echo "error: $win_zip does not contain install.bat"
       exit 1
