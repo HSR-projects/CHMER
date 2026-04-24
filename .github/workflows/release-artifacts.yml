@@ -104,11 +104,6 @@ jobs:
             version: "14.1"
             architecture: x86_64
             archive: chmer-freebsd-aarch64.tar.gz
-          - slug: openbsd-x86_64
-            os: openbsd
-            version: "7.5"
-            architecture: x86_64
-            archive: chmer-openbsd-x86_64.tar.gz
           - slug: netbsd-x86_64
             os: netbsd
             version: "10.0"
@@ -130,19 +125,9 @@ jobs:
             set -eu
             case "${{ matrix.os }}" in
               freebsd) sudo pkg install -y rust ;;
-              openbsd)
-                sudo pkg_add curl
-                curl --proto '=https' --tlsv1.2 -fsSLo rustup-init https://static.rust-lang.org/rustup/dist/x86_64-unknown-openbsd/rustup-init
-                chmod +x rustup-init
-                ./rustup-init -y --profile minimal --default-toolchain stable
-                export PATH="$HOME/.cargo/bin:$PATH"
-                ;;
               netbsd) sudo pkgin -y install rust ;;
             esac
             cd "$GITHUB_WORKSPACE"
-            if [ "${{ matrix.os }}" = "openbsd" ]; then
-              export PATH="$HOME/.cargo/bin:$PATH"
-            fi
             cargo build --release
             mkdir -p out/pkg/bin
             cp target/release/chmer out/pkg/bin/chmer
@@ -155,6 +140,34 @@ jobs:
         with:
           name: ${{ matrix.archive }}
           path: out/${{ matrix.archive }}
+
+  build-openbsd:
+    name: Build openbsd-x86_64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-openbsd
+      - uses: goto-bus-stop/setup-zig@v2
+      - name: Install cargo-zigbuild
+        run: cargo install cargo-zigbuild
+      - name: Build
+        run: cargo zigbuild --release --target x86_64-unknown-openbsd
+      - name: Package archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out/pkg/bin
+          cp target/x86_64-unknown-openbsd/release/chmer out/pkg/bin/chmer
+          cp README.md out/pkg/README.md
+          cp LICENSE out/pkg/LICENSE
+          cp -R examples out/pkg/examples
+          tar -czf out/chmer-openbsd-x86_64.tar.gz -C out/pkg .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chmer-openbsd-x86_64.tar.gz
+          path: out/chmer-openbsd-x86_64.tar.gz
 
   build-windows:
     name: Build ${{ matrix.slug }}
@@ -201,7 +214,7 @@ jobs:
   upload-release:
     name: Upload artifacts to release
     runs-on: ubuntu-latest
-    needs: [build-unix, build-bsd, build-windows]
+    needs: [build-unix, build-bsd, build-openbsd, build-windows]
     steps:
       - uses: actions/checkout@v4
 
