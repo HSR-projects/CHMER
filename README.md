@@ -128,7 +128,7 @@ Publish these files in your release (same directory as `install.sh` / `install.p
 - **Linux aarch64**: `chmer-linux-aarch64.tar.gz`
 - **macOS arm64**: `chmer-macos-aarch64.tar.gz`
 - **macOS x86_64**: `chmer-macos-x86_64.tar.gz`
-- **Windows x86_64**: `chmer-windows-x86_64.zip` (contains `chmer.exe`)
+- **Windows x86_64**: `chmer-windows-x86_64.zip` (contains `chmer.exe`, `install.bat`, `uninstall.bat`)
 - **Windows aarch64**: `chmer-windows-aarch64.zip`
 - **FreeBSD x86_64**: `chmer-freebsd-x86_64.tar.gz`
 - **FreeBSD aarch64**: `chmer-freebsd-aarch64.tar.gz`

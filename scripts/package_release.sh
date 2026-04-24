@@ -114,6 +114,20 @@ if [ -n "$MISSING_FILES" ]; then
   fi
 fi
 
+# Windows archives must contain helper scripts so install.ps1 can delegate.
+for win_zip in "$DIST_DIR"/chmer-windows-*.zip; do
+  if [ -f "$win_zip" ] && command -v unzip >/dev/null 2>&1; then
+    if ! unzip -l "$win_zip" | awk '{print $4}' | rg -q '^install\.bat$'; then
+      echo "error: $win_zip does not contain install.bat"
+      exit 1
+    fi
+    if ! unzip -l "$win_zip" | awk '{print $4}' | rg -q '^uninstall\.bat$'; then
+      echo "error: $win_zip does not contain uninstall.bat"
+      exit 1
+    fi
+  fi
+done
+
 # Bundle installers + all currently available platform archives into one zip.
 if command -v zip >/dev/null 2>&1; then
   INSTALLERS_LIST="$DIST_DIR/installers.list"
