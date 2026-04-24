@@ -24,48 +24,60 @@ jobs:
             target: x86_64-unknown-linux-gnu
             archive: chmer-linux-x86_64.tar.gz
             exe_name: chmer
+            install_target: true
           - slug: linux-aarch64
             runner: ubuntu-latest
             target: aarch64-unknown-linux-gnu
             archive: chmer-linux-aarch64.tar.gz
             exe_name: chmer
+            install_target: true
           - slug: macos-aarch64
             runner: macos-14
             target: aarch64-apple-darwin
             archive: chmer-macos-aarch64.tar.gz
             exe_name: chmer
+            install_target: true
           - slug: macos-x86_64
             runner: macos-14
             target: x86_64-apple-darwin
             archive: chmer-macos-x86_64.tar.gz
             exe_name: chmer
+            install_target: true
           - slug: freebsd-x86_64
             runner: ubuntu-latest
             target: x86_64-unknown-freebsd
             archive: chmer-freebsd-x86_64.tar.gz
             exe_name: chmer
+            install_target: false
           - slug: freebsd-aarch64
             runner: ubuntu-latest
             target: aarch64-unknown-freebsd
             archive: chmer-freebsd-aarch64.tar.gz
             exe_name: chmer
+            install_target: false
           - slug: openbsd-x86_64
             runner: ubuntu-latest
             target: x86_64-unknown-openbsd
             archive: chmer-openbsd-x86_64.tar.gz
             exe_name: chmer
+            install_target: false
           - slug: netbsd-x86_64
             runner: ubuntu-latest
             target: x86_64-unknown-netbsd
             archive: chmer-netbsd-x86_64.tar.gz
             exe_name: chmer
+            install_target: false
 
     steps:
       - uses: actions/checkout@v4
 
       - uses: dtolnay/rust-toolchain@stable
+        if: matrix.install_target
         with:
           targets: ${{ matrix.target }}
+
+      - uses: dtolnay/rust-toolchain@stable
+        if: runner.os == 'Linux' && !matrix.install_target
 
       - name: Install cross
         if: runner.os == 'Linux'
