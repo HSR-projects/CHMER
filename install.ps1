@@ -35,71 +35,37 @@ function Get-ArchiveName([string]$arch) {
   }
 }
 
-function Find-Binary([string]$root) {
-  $direct = Join-Path $root "chmer.exe"
-  if (Test-Path $direct) { return $direct }
-  $bin = Join-Path $root "bin\chmer.exe"
-  if (Test-Path $bin) { return $bin }
-  $found = Get-ChildItem -Path $root -Recurse -Filter "chmer.exe" -File | Select-Object -First 1
-  if ($null -eq $found) { return $null }
-  return $found.FullName
-}
-
 $arch = Get-Arch
 $archive = Get-ArchiveName -arch $arch
 $url = "$ReleaseBase/$archive"
-$logoUrl = "$ReleaseBase/chmer.png"
-$assetUrl = "$ReleaseBase/chmer-assets.zip"
 
 Write-Host "CHMER installer" -ForegroundColor Green
-Write-Host "Logo: chmer.png (included in release assets/docs)"
 Write-Host "Platform: windows-$arch"
 Write-Host "Download: $url"
 
 $tmp = Join-Path $env:TEMP ("chmer-install-" + [guid]::NewGuid().ToString("N"))
-New-Item -ItemType Directory -Force -Path $tmp | Out-Null
-New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
-New-Item -ItemType Directory -Force -Path $AssetDir | Out-Null
-
 $zipPath = Join-Path $tmp $archive
 $outPath = Join-Path $tmp "unpack"
+
+New-Item -ItemType Directory -Force -Path $tmp | Out-Null
 New-Item -ItemType Directory -Force -Path $outPath | Out-Null
 
 Invoke-WebRequest -Uri $url -OutFile $zipPath
 Expand-Archive -Path $zipPath -DestinationPath $outPath -Force
 
-$bin = Find-Binary -root $outPath
-if ($null -eq $bin) {
-  throw "chmer.exe not found in downloaded archive"
+$bat = Get-ChildItem -Path $outPath -Recurse -Filter "install.bat" -File | Select-Object -First 1
+if ($null -eq $bat) {
+  throw "install.bat not found in downloaded archive. Include install.bat in Windows release package."
 }
 
-Copy-Item -Force $bin (Join-Path $InstallDir "chmer.exe")
+$env:CHMER_INSTALL_DIR = $InstallDir
+$env:CHMER_ASSET_DIR = $AssetDir
+$env:CHMER_WITH_ASSETS = $WithAssets
 
-try {
-  Invoke-WebRequest -Uri $logoUrl -OutFile (Join-Path $InstallDir "chmer.png")
-} catch {
-  # optional logo download
+Write-Host "Delegating installation to: $($bat.FullName)"
+& cmd.exe /c "`"$($bat.FullName)`" `"$($bat.Directory.FullName)`""
+if ($LASTEXITCODE -ne 0) {
+  throw "install.bat failed with exit code $LASTEXITCODE"
 }
 
-if ($WithAssets -eq "1") {
-  try {
-    $assetZip = Join-Path $tmp "chmer-assets.zip"
-    Invoke-WebRequest -Uri $assetUrl -OutFile $assetZip
-    Expand-Archive -Path $assetZip -DestinationPath $AssetDir -Force
-    Write-Host "Assets installed: $AssetDir (images/text/emoji packs)" -ForegroundColor Green
-  } catch {
-    Write-Host "Assets pack not found in release (skipping): $assetUrl"
-  }
-}
-
-Write-Host ""
 Write-Host "Installed: $InstallDir\chmer.exe" -ForegroundColor Green
-Write-Host "Run: $InstallDir\chmer.exe"
-Write-Host "Asset dir: $AssetDir"
-
-$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-if ($userPath -notlike "*$InstallDir*") {
-  $newPath = if ([string]::IsNullOrWhiteSpace($userPath)) { $InstallDir } else { "$userPath;$InstallDir" }
-  [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
-  Write-Host "User PATH updated." -ForegroundColor Green
-}

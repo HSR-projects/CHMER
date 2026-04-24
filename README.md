@@ -31,10 +31,12 @@ install.bat
 
 > The installers download a **precompiled** `chmer` for your OS/CPU. No building.
 >
+> Windows flow: `install.ps1` downloads/extracts the Windows archive and runs `install.bat` from that archive to complete setup.
+>
 > Put `install.sh` and `install.ps1` in your release download directory and keep
 > all precompiled archives there too.
 >
-> For Windows convenience, include `install.bat` and `uninstall.bat` in release assets.
+> For Windows, include `install.bat` and `uninstall.bat` in release assets and inside Windows binary archives.
 
 ## VS Code / Cursor file logo for `.ch`
 
