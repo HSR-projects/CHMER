@@ -252,12 +252,14 @@ jobs:
             chmer-openbsd-x86_64.tar.gz \
             chmer-netbsd-x86_64.tar.gz
           do
-            tar -tzf "release/$f" | grep -Eq '(^|/)chmer$'
+            entries="$(tar -tzf "release/$f")"
+            printf '%s\n' "$entries" | grep -Eq '(^|/)chmer$'
           done
           for f in chmer-windows-x86_64.zip chmer-windows-aarch64.zip; do
-            unzip -l "release/$f" | awk '{print $4}' | grep -Eq '(^|/)chmer\.exe$'
-            unzip -l "release/$f" | awk '{print $4}' | grep -Eq '(^|/)install\.bat$'
-            unzip -l "release/$f" | awk '{print $4}' | grep -Eq '(^|/)uninstall\.bat$'
+            entries="$(unzip -Z1 "release/$f")"
+            printf '%s\n' "$entries" | grep -Eq '(^|/)chmer\.exe$'
+            printf '%s\n' "$entries" | grep -Eq '(^|/)install\.bat$'
+            printf '%s\n' "$entries" | grep -Eq '(^|/)uninstall\.bat$'
           done
 
       - name: Upload to GitHub release
